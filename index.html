@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1a365d" />
+
+    <title>SISAR | Sistema InSAR - CEDIAC - UNCuyo</title>
+    <meta name="description" content="Sistema de Analisis InSAR Satelital — Procesamiento de datos Sentinel-1 con ISCE2, MintPy y MiaplPy. CEDIAC, Universidad Nacional de Cuyo." />
+    <meta name="keywords" content="InSAR, SAR, Sentinel-1, ISCE2, MintPy, MiaplPy, CEDIAC, UNCuyo, deformacion, subsidencia, radar, interferometria" />
+    <meta name="author" content="CEDIAC - UNCuyo - CONICET" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SISAR | Sistema InSAR - CEDIAC" />
+    <meta property="og:description" content="Demo interactivo de analisis InSAR satelital con visualizacion 3D y procesamiento ISCE2 + MintPy." />
+    <meta property="og:locale" content="es_AR" />
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>" />
+
+    <!-- Preconnect to font/CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  </head>
+  <body>
+    <div id="root">
+      <!-- Loading splash mientras carga el bundle JS -->
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:linear-gradient(180deg,#f8fafc 0%,#e6ecf3 100%);font-family:'Inter',Arial,sans-serif;">
+        <div style="font-size:3rem;">🛰️</div>
+        <div style="color:#1a365d;font-weight:600;margin-top:16px;">SISAR</div>
+        <div style="color:#7a8494;font-size:0.82rem;margin-top:4px;">Cargando aplicacion...</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
