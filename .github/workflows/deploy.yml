@@ -33,9 +33,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Si el repo no se llama "sisar-demo-react.github.io",
-          # vite necesita el base path para resolver assets correctamente.
-          VITE_BASE: /sisar-demo-react/
+          # Base path para GitHub Pages — coincide con el nombre del repo
+          VITE_BASE: /SisardebolsilloDEMO/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
