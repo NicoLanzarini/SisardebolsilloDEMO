@@ -1,5 +1,4 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 
 const features = [
   {
@@ -26,13 +25,7 @@ const features = [
 
 export default function LandingPage({ onEnter }) {
   return (
-    <motion.div
-      className="landing"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-    >
+    <div className="landing">
       <div className="landing-bg-pattern" />
 
       {/* Top bar */}
@@ -44,18 +37,13 @@ export default function LandingPage({ onEnter }) {
         <div className="landing-topbar-links">
           <a href="https://www.uncuyo.edu.ar" target="_blank" rel="noreferrer">UNCuyo</a>
           <a href="https://cediac.ingenieria.uncuyo.edu.ar" target="_blank" rel="noreferrer">CEDIAC</a>
-          <a href="#" onClick={(e) => { e.preventDefault() }}>Documentacion</a>
+          <a href="#" onClick={(e) => e.preventDefault()}>Documentacion</a>
         </div>
       </div>
 
       {/* Hero */}
       <div className="landing-hero">
-        <motion.div
-          className="landing-hero-inner"
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+        <div className="landing-hero-inner anim-fadein-up" style={{ animationDelay: '0.05s' }}>
           <div className="landing-badge">
             CEDIAC · CONICET · Universidad Nacional de Cuyo
           </div>
@@ -71,33 +59,29 @@ export default function LandingPage({ onEnter }) {
             Procesamiento automatizado, visualizacion 3D y analisis de series temporales.
           </h2>
 
-          <motion.button
+          <button
             className="landing-enter-btn"
             onClick={onEnter}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
           >
             Entrar al Sistema
             <span className="arrow">→</span>
-          </motion.button>
+          </button>
 
           {/* Features grid */}
           <div className="landing-features">
             {features.map((feat, i) => (
-              <motion.div
+              <div
                 key={feat.title}
-                className="landing-feature"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
+                className="landing-feature anim-fadein-up"
+                style={{ animationDelay: `${0.15 + i * 0.08}s` }}
               >
                 <div className="feat-icon">{feat.icon}</div>
                 <h3>{feat.title}</h3>
                 <p>{feat.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Footer */}
@@ -110,6 +94,6 @@ export default function LandingPage({ onEnter }) {
           Alaska Satellite Facility
         </a>
       </div>
-    </motion.div>
+    </div>
   )
 }

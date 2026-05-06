@@ -1,6 +1,6 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo, useRef, Component } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Text, Grid } from '@react-three/drei'
+import { OrbitControls, Grid } from '@react-three/drei'
 import * as THREE from 'three'
 import {
   generateTerrain,
@@ -88,48 +88,11 @@ function TerrainMesh({ region, viewMode, exaggeration }) {
   )
 }
 
-/* ── Ejes con etiquetas ───────────────────────────────────────── */
+/* ── Ejes con etiquetas (sin fuentes externas) ────────────────── */
 function AxisLabels({ region }) {
-  const { bounds } = region
-  return (
-    <group>
-      {/* Label Longitud (X axis) */}
-      <Text
-        position={[0, -0.3, 5.8]}
-        fontSize={0.28}
-        color="#4b5563"
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZg.ttf"
-      >
-        Longitud ({bounds.west.toFixed(1)} a {bounds.east.toFixed(1)})
-      </Text>
-      {/* Label Latitud (Z axis) */}
-      <Text
-        position={[-5.8, -0.3, 0]}
-        fontSize={0.28}
-        color="#4b5563"
-        anchorX="center"
-        anchorY="middle"
-        rotation={[0, Math.PI / 2, 0]}
-        font="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZg.ttf"
-      >
-        Latitud ({bounds.south.toFixed(1)} a {bounds.north.toFixed(1)})
-      </Text>
-      {/* Elevation label */}
-      <Text
-        position={[-5.8, 1, -5.5]}
-        fontSize={0.24}
-        color="#9ca3af"
-        anchorX="center"
-        anchorY="middle"
-        rotation={[0, Math.PI / 4, Math.PI / 2]}
-        font="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZg.ttf"
-      >
-        Elevacion (m)
-      </Text>
-    </group>
-  )
+  // Las etiquetas se muestran como overlay HTML, no como Text 3D
+  // para evitar dependencia de carga de fuentes remotas
+  return null
 }
 
 /* ── Bounding box wireframe ───────────────────────────────────── */
@@ -210,6 +173,24 @@ function Scene({ region, viewMode, exaggeration }) {
   )
 }
 
+/* ── ErrorBoundary local para el canvas 3D ───────────────────── */
+class CanvasErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { failed: false } }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() {
+    if (this.state.failed) {
+      return (
+        <div className="viewer-empty">
+          <div className="empty-icon">🖥️</div>
+          <p>El visualizador 3D no pudo iniciarse en este equipo.</p>
+          <span className="hint">Puede que el navegador no soporte WebGL. Pruebe con Chrome o Edge.</span>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 /* ── Componente exportado ─────────────────────────────────────── */
 export default function TerrainViewer({ region, viewMode, exaggeration, isReady }) {
   if (!region || !isReady) {
@@ -229,29 +210,30 @@ export default function TerrainViewer({ region, viewMode, exaggeration, isReady 
   }
 
   return (
-    <Canvas
-      camera={{
-        position: [8, 6, 8],
-        fov: 45,
-        near: 0.1,
-        far: 100,
-      }}
-      gl={{
-        antialias: true,
-        preserveDrawingBuffer: true,
-        toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.1,
-      }}
-      style={{ background: 'linear-gradient(180deg, #eef2f7 0%, #dce3ed 100%)' }}
-      id="terrain-canvas"
-    >
-      <color attach="background" args={['#eef2f7']} />
-      <fog attach="fog" args={['#eef2f7', 20, 40]} />
-      <Scene
-        region={region}
-        viewMode={viewMode}
-        exaggeration={exaggeration}
-      />
-    </Canvas>
+    <CanvasErrorBoundary>
+      <Canvas
+        camera={{ position: [8, 6, 8], fov: 45, near: 0.1, far: 100 }}
+        gl={{
+          antialias: true,
+          preserveDrawingBuffer: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.1,
+          failIfMajorPerformanceCaveat: false,
+        }}
+        style={{ background: 'linear-gradient(180deg, #eef2f7 0%, #dce3ed 100%)' }}
+        id="terrain-canvas"
+        onCreated={({ gl }) => {
+          gl.domElement.id = 'terrain-canvas-inner'
+        }}
+      >
+        <color attach="background" args={['#eef2f7']} />
+        <fog attach="fog" args={['#eef2f7', 20, 40]} />
+        <Scene
+          region={region}
+          viewMode={viewMode}
+          exaggeration={exaggeration}
+        />
+      </Canvas>
+    </CanvasErrorBoundary>
   )
 }

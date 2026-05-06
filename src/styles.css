@@ -72,6 +72,30 @@ body {
   min-height: 100vh;
 }
 
+/* ── Animaciones CSS puras — más confiables que framer-motion en todos los browsers */
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.landing-fadein {
+  animation: fadeInPage 0.35s ease-out both;
+}
+
+.dashboard-fadein {
+  animation: fadeInPage 0.3s ease-out both;
+}
+
+/* Usada en LandingPage y secciones del Dashboard */
+.anim-fadein-up {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
 /* ── Landing Page ──────────────────────────────────────────────── */
 .landing {
   min-height: 100vh;
@@ -348,6 +372,25 @@ body {
   gap: 16px;
   font-size: 0.8rem;
   color: var(--gray-500);
+}
+
+.dash-telegram-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: #2AABEE;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+.dash-telegram-btn:hover {
+  background: #1e96d4;
+  transform: translateY(-1px);
 }
 
 .dash-header-right .status-dot {

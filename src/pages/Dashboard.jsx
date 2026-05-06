@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { motion } from 'framer-motion'
 import MapSelector from '../components/MapSelector'
 import TerrainViewer from '../components/TerrainViewer'
 import ProcessTimeline from '../components/ProcessTimeline'
@@ -8,8 +7,8 @@ import InSARProducts from '../components/InSARProducts'
 import DEMCorrection from '../components/DEMCorrection'
 import { REGIONS, generateInSAR } from '../utils/terrain'
 
-// ── Telegram bot link (cambiar a tu bot real) ─────────────────────
-const TELEGRAM_BOT_URL = 'https://t.me/SISAR_CEDIAC_bot'
+// ── Telegram bot link ─────────────────────────────────────────────
+const TELEGRAM_BOT_URL = 'https://t.me/Prueba_Benjabot'
 
 export default function Dashboard({ selectedRegion, onSelectRegion, onBack }) {
   const [analyzing, setAnalyzing] = useState(false)
@@ -32,7 +31,8 @@ export default function Dashboard({ selectedRegion, onSelectRegion, onBack }) {
     setComputeStart(startTime)
     setComputeTime(null)
 
-    const delays = [800, 2200, 3800, 5600, 7600, 9800]
+    // Delays reducidos: ~4 segundos total (antes ~11s)
+    const delays = [400, 900, 1500, 2200, 3000, 3700]
     const steps = [1, 2, 3, 4, 5, 6]
     steps.forEach((step, i) => {
       setTimeout(() => {
@@ -42,7 +42,7 @@ export default function Dashboard({ selectedRegion, onSelectRegion, onBack }) {
             setAnalyzing(false)
             setAnalysisComplete(true)
             setComputeTime(((Date.now() - startTime) / 1000).toFixed(1))
-          }, 1200)
+          }, 500)
         }
       }, delays[i])
     })
@@ -311,7 +311,7 @@ ${canvasDataUrl ? `
 <div class="footer">
   <strong>SISAR</strong> · Universidad Nacional de Cuyo · CEDIAC · CONICET — Mendoza, Argentina<br>
   Datos: Sentinel-1 SLC (ESA/Copernicus) via Alaska Satellite Facility · DEM Copernicus GLO-30<br>
-  Correccion DEM: Euillades, P.A. (2004) · Contacto: @SISAR_CEDIAC_bot<br>
+  Correccion DEM: Euillades, P.A. (2004) · Contacto: @Prueba_Benjabot<br>
   <em>Este reporte fue generado automaticamente por el sistema SISAR Demo v1.0</em>
 </div>
 </body></html>`
@@ -331,13 +331,7 @@ ${canvasDataUrl ? `
     : null
 
   return (
-    <motion.div
-      className="dashboard"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div className="dashboard dashboard-fadein">
       {/* Header */}
       <header className="dash-header">
         <div className="dash-header-left">
@@ -350,6 +344,14 @@ ${canvasDataUrl ? `
           </div>
         </div>
         <div className="dash-header-right">
+          <a
+            href={TELEGRAM_BOT_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="dash-telegram-btn"
+          >
+            <span>📱</span> Telegram Bot
+          </a>
           <span><span className="status-dot" /> Sistema activo</span>
           <span>CEDIAC · UNCuyo</span>
         </div>
@@ -359,12 +361,7 @@ ${canvasDataUrl ? `
       <div className="dash-content">
 
         {/* Section 1: Map Selection */}
-        <motion.section
-          className="dash-section"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-        >
+        <section className="dash-section anim-fadein-up" style={{ animationDelay: '0.05s' }}>
           <div className="dash-section-header">
             <span className="dash-section-number">1</span>
             <h2>Seleccion de Zona de Estudio</h2>
@@ -387,15 +384,10 @@ ${canvasDataUrl ? `
               </div>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Section 2: Pipeline */}
-        <motion.section
-          className="dash-section"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
+        <section className="dash-section anim-fadein-up" style={{ animationDelay: '0.12s' }}>
           <div className="dash-section-header">
             <span className="dash-section-number">2</span>
             <h2>Pipeline de Procesamiento</h2>
@@ -405,9 +397,8 @@ ${canvasDataUrl ? `
             <div className="card-body">
               <ProcessTimeline currentStep={pipelineStep} />
               {analyzing && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                <div
+                  className="anim-fadein-up"
                   style={{
                     textAlign: 'center',
                     marginTop: 12,
@@ -416,20 +407,15 @@ ${canvasDataUrl ? `
                     fontWeight: 600,
                   }}
                 >
-                  ⏳ Procesando datos InSAR... Esto puede tardar varios minutos en produccion
-                </motion.div>
+                  ⏳ Procesando datos InSAR...
+                </div>
               )}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Section 3: 3D Visualization */}
-        <motion.section
-          className="dash-section"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
+        <section className="dash-section anim-fadein-up" style={{ animationDelay: '0.18s' }}>
           <div className="dash-section-header">
             <span className="dash-section-number">3</span>
             <h2>Visualizacion 3D — Productos MintPy / MiaplPy</h2>
@@ -524,16 +510,11 @@ ${canvasDataUrl ? `
               </div>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Section 4: InSAR Products — MintPy / MiaplPy (NEW - protagonismo) */}
         {analysisComplete && region && (
-          <motion.section
-            className="dash-section"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
+          <section className="dash-section anim-fadein-up">
             <div className="dash-section-header">
               <span className="dash-section-number">4</span>
               <h2>Productos InSAR — ISCE2 / MintPy / MiaplPy</h2>
@@ -544,18 +525,12 @@ ${canvasDataUrl ? `
                 <InSARProducts region={region} />
               </div>
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Section 5: Results + Statistics */}
         {analysisComplete && region && (
-          <motion.section
-            className="dash-section"
-            ref={resultsRef}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
+          <section className="dash-section anim-fadein-up" ref={resultsRef}>
             <div className="dash-section-header">
               <span className="dash-section-number">5</span>
               <h2>Resultados del Analisis</h2>
@@ -596,16 +571,11 @@ ${canvasDataUrl ? `
                 )}
               </button>
             </div>
-          </motion.section>
+          </section>
         )}
 
         {/* Section 6: About SISAR Bolsillo / App Pocket */}
-        <motion.section
-          className="dash-section"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-        >
+        <section className="dash-section anim-fadein-up" style={{ animationDelay: '0.25s' }}>
           <div className="dash-section-header">
             <span className="dash-section-number">6</span>
             <h2>SISAR de Bolsillo — Version Liviana</h2>
@@ -671,7 +641,7 @@ ${canvasDataUrl ? `
               </div>
             </div>
           </div>
-        </motion.section>
+        </section>
       </div>
 
       {/* Footer */}
@@ -697,10 +667,10 @@ ${canvasDataUrl ? `
               fontWeight: 600,
             }}
           >
-            📱 Bot Telegram: @SISAR_CEDIAC_bot
+            📱 Bot Telegram: @Prueba_Benjabot
           </a>
         </div>
       </footer>
-    </motion.div>
+    </div>
   )
 }

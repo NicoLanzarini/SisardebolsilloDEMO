@@ -1,55 +1,47 @@
-import React, { useState, lazy, Suspense } from 'react'
+import React, { useState, Component } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import LandingPage from './pages/LandingPage'
+import Dashboard from './pages/Dashboard'
 
-// Lazy-load del Dashboard: Three.js + Leaflet solo se descargan cuando el
-// usuario hace clic en "Entrar". La landing carga ~80KB en lugar de 1.4MB.
-const Dashboard = lazy(() => import('./pages/Dashboard'))
-
-function DashboardLoader() {
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      background: 'linear-gradient(180deg, #f8fafc 0%, #e6ecf3 100%)',
-      gap: 20,
-    }}>
-      <div style={{ fontSize: '3rem' }}>🛰️</div>
-      <div style={{
-        width: 240,
-        height: 4,
-        background: '#e2e8f0',
-        borderRadius: 2,
-        overflow: 'hidden',
-        position: 'relative',
-      }}>
+// ── ErrorBoundary: captura crashes de cualquier hijo y muestra fallback ──
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error }
+  }
+  componentDidCatch(error, info) {
+    console.error('[SISAR ErrorBoundary]', error, info)
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
         <div style={{
-          position: 'absolute',
-          height: '100%',
-          width: '40%',
-          background: 'linear-gradient(90deg, #1a365d, #c9a24a)',
-          borderRadius: 2,
-          animation: 'loaderSlide 1.2s infinite ease-in-out',
-        }} />
-      </div>
-      <div style={{ color: '#1a365d', fontWeight: 600, fontSize: '0.9rem' }}>
-        Cargando SISAR...
-      </div>
-      <div style={{ color: '#7a8494', fontSize: '0.78rem' }}>
-        Inicializando motor 3D y mapas
-      </div>
-      <style>{`
-        @keyframes loaderSlide {
-          0% { transform: translateX(-100%); }
-          50% { transform: translateX(150%); }
-          100% { transform: translateX(150%); }
-        }
-      `}</style>
-    </div>
-  )
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', height: '100vh',
+          background: '#f8fafc', fontFamily: 'Inter, Arial, sans-serif', gap: 16,
+        }}>
+          <div style={{ fontSize: '3rem' }}>⚠️</div>
+          <h2 style={{ color: '#1a365d', margin: 0 }}>Error en la aplicacion</h2>
+          <p style={{ color: '#555e6b', fontSize: '0.9rem', maxWidth: 400, textAlign: 'center' }}>
+            {this.state.error?.message || 'Ocurrio un error inesperado.'}
+          </p>
+          <button
+            onClick={() => { this.setState({ hasError: false, error: null }) }}
+            style={{
+              padding: '10px 24px', background: '#1a365d', color: '#fff',
+              border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: '0.9rem',
+            }}
+          >
+            Reintentar
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
 }
 
 export default function App() {
@@ -57,24 +49,27 @@ export default function App() {
   const [selectedRegion, setSelectedRegion] = useState(null)
 
   return (
-    <div className="app">
-      <AnimatePresence mode="wait">
-        {currentView === 'landing' ? (
-          <LandingPage
-            key="landing"
-            onEnter={() => setCurrentView('dashboard')}
-          />
-        ) : (
-          <Suspense fallback={<DashboardLoader />}>
+    <ErrorBoundary>
+      <div className="app">
+        <AnimatePresence mode="wait">
+          {currentView === 'landing' ? (
+            <LandingPage
+              key="landing"
+              onEnter={() => setCurrentView('dashboard')}
+            />
+          ) : (
             <Dashboard
               key="dashboard"
               selectedRegion={selectedRegion}
               onSelectRegion={setSelectedRegion}
-              onBack={() => setCurrentView('landing')}
+              onBack={() => {
+                setCurrentView('landing')
+                setSelectedRegion(null)
+              }}
             />
-          </Suspense>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+        </AnimatePresence>
+      </div>
+    </ErrorBoundary>
   )
 }
