@@ -1,7 +1,7 @@
 import React, { useState, Component } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import LandingPage from './pages/LandingPage'
-import Dashboard from './pages/Dashboard'
+import MapDashboard from './pages/MapDashboard'
 
 // ── ErrorBoundary: captura crashes de cualquier hijo y muestra fallback ──
 class ErrorBoundary extends Component {
@@ -58,14 +58,9 @@ export default function App() {
               onEnter={() => setCurrentView('dashboard')}
             />
           ) : (
-            <Dashboard
+            <MapDashboard
               key="dashboard"
-              selectedRegion={selectedRegion}
-              onSelectRegion={setSelectedRegion}
-              onBack={() => {
-                setCurrentView('landing')
-                setSelectedRegion(null)
-              }}
+              onBack={() => setCurrentView('landing')}
             />
           )}
         </AnimatePresence>
